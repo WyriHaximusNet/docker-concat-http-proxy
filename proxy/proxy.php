@@ -30,7 +30,7 @@ $httpServer = new HttpServer(
 
             /** @var ResponseInterface $response */
             foreach ($responses as $response) {
-                $body .= (string)$response->getBody();
+                $body .= (string)$response->getBody() . PHP_EOL;
             }
 
             return new Response(200, [], $body);
