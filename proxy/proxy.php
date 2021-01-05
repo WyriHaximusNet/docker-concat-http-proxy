@@ -22,15 +22,20 @@ $httpServer = new HttpServer(
         $requests = [];
 
         foreach (explode(',', getenv('URLS')) as $url) {
-            $requests[] = $browser->get($url . $request->getUri()->getPath() . '?' . $request->getUri()->getQuery());
+            $requests[] = $browser->get(
+                $url . $request->getUri()->getPath() . '?' . $request->getUri()->getQuery()
+            )->then(
+                static fn (ResponseInterface $response): string => (string)$response->getBody(),
+                static fn (): string => '',
+            );
         }
 
-        return all($requests)->then(function (array $responses) {
+        return all($requests)->then(function (array $strings) {
             $body = '';
 
-            /** @var ResponseInterface $response */
-            foreach ($responses as $response) {
-                $body .= (string)$response->getBody() . PHP_EOL;
+            /** @var  */
+            foreach ($strings as $string) {
+                $body .= $string;
             }
 
             return new Response(200, [], $body);
